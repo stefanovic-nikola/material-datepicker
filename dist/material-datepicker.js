@@ -24,6 +24,7 @@ function () {
       position: null,
       openOn: 'click',
       closeAfterClick: true,
+      pickerParent: null,
       date: new Date(),
       weekBegin: 'sunday',
       outputFormat: {
@@ -402,10 +403,21 @@ function () {
           this.date = moment(elementVal, this.settings.outputFormat).toDate();
         }
 
-        document.body.appendChild(this.picker);
+        var parentElement;
+
+        if (this.settings.pickerParent) {
+          parentElement = document.querySelector(this.settings.pickerParent);
+        }
+
+        if (parentElement) {
+          parentElement.appendChild(this.picker);
+        } else {
+          document.body.appendChild(this.picker);
+        }
+
         var pickerOffset = 10;
 
-        var elementPosition = this._findTotalOffset(this.element);
+        var elementPosition = this._findTotalOffset(this.element, parentElement);
 
         var top = elementPosition.top + elementPosition.height + pickerOffset;
         var left = elementPosition.left;
@@ -512,7 +524,7 @@ function () {
     }
   }, {
     key: "_findTotalOffset",
-    value: function _findTotalOffset(obj) {
+    value: function _findTotalOffset(obj, relativeToParent) {
       var ol, ot;
       ol = ot = 0;
       var offset = obj.getBoundingClientRect();
@@ -521,6 +533,10 @@ function () {
         do {
           ol += obj.offsetLeft;
           ot += obj.offsetTop;
+
+          if (relativeToParent && obj.offsetParent == relativeToParent) {
+            break;
+          }
         } while (obj = obj.offsetParent);
       }
 

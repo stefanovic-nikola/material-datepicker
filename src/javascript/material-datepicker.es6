@@ -12,6 +12,7 @@ class MaterialDatepicker {
       position: null,
       openOn: 'click',
       closeAfterClick: true,
+      pickerParent: null,
 
       date: new Date(),
       weekBegin: 'sunday',
@@ -337,8 +338,8 @@ class MaterialDatepicker {
   }
 
   _siteChange(direction) {
-    let directions = {'-1': 'left', '1': 'right'}
-    let directionsNot = {'-1': 'right', '1': 'left'}
+    let directions = { '-1': 'left', '1': 'right' }
+    let directionsNot = { '-1': 'right', '1': 'left' }
     if (this.settings.type == 'date') {
       this.date = moment(this.date).add(direction, 'month').toDate()
     } else if (this.settings.type == 'month') {
@@ -379,10 +380,20 @@ class MaterialDatepicker {
         this.date = moment(elementVal, this.settings.outputFormat).toDate()
       }
 
-      document.body.appendChild(this.picker)
+      let parentElement;
+      if (this.settings.pickerParent) {
+        parentElement = document.querySelector(this.settings.pickerParent);
+      }
+
+      if (parentElement) {
+        parentElement.appendChild(this.picker);
+      } else {
+        document.body.appendChild(this.picker)
+      }
+
       const pickerOffset = 10
 
-      let elementPosition = this._findTotalOffset(this.element)
+      let elementPosition = this._findTotalOffset(this.element, parentElement)
       let top = elementPosition.top + elementPosition.height + pickerOffset
       let left = elementPosition.left
       let bodyWidth = bodyWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
@@ -481,7 +492,7 @@ class MaterialDatepicker {
     }
   }
 
-  _findTotalOffset(obj) {
+  _findTotalOffset(obj, relativeToParent) {
     let ol, ot
     ol = ot = 0
     let offset = obj.getBoundingClientRect()
@@ -490,10 +501,14 @@ class MaterialDatepicker {
       do {
         ol += obj.offsetLeft
         ot += obj.offsetTop
+
+        if (relativeToParent && obj.offsetParent == relativeToParent) {
+          break;
+        }
       } while (obj = obj.offsetParent)
     }
 
-    return {left: ol, top: ot, height: offset.height, width: offset.width}
+    return { left: ol, top: ot, height: offset.height, width: offset.width }
   }
 
   _getPath(event) {

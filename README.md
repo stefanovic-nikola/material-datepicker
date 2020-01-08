@@ -51,6 +51,7 @@ var monthpicker = new MaterialDatepicker('input', {
 * **theme** *(default: "light")* *[string]* - Theme of the picker: light or dark
 * **openOn** *(default: "click")* *[string]* - How to open the picker: Click-events or 'direct'
 * **closeAfterClick** *(default: true)* *[string]* - Close the picker after choose a date or not
+* **pickerParent** *(default: document.body)* *[string]* - Set containing block for absolutely positioned picker
 
 * **date** *(default: today or string inside input)* *[type: Date Object]* - The initial date of the Picker
 * **weekBegin** *(default: "sunday")* *[string]* - Beginning weekday of the week: sunday or monday
